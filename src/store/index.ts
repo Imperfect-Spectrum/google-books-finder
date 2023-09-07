@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import todoReducer from "./todoSlice";
 import sortingSlice from "./sortingSlice";
+import categoriesSlice from "./categoriesSlice";
+import bookSlice from "./bookSlice";
 
 const store = configureStore({
   reducer: {
-    todos: todoReducer,
+    books: bookSlice,
     sorts: sortingSlice,
+    categories: categoriesSlice,
   },
 });
 

@@ -9,15 +9,15 @@ const initialState: SelectCategories = {
 };
 
 const categoriesSlice = createSlice({
-  name: "selectSorting",
+  name: "selectCategories",
   initialState,
   reducers: {
-    setSelectSorting: (state, action: PayloadAction<SelectCategories>) => {
+    setSelectCategories: (state, action: PayloadAction<SelectCategories>) => {
       // eslint-disable-next-line no-param-reassign
       state.selectCategories = action.payload.selectCategories;
     },
   },
 });
 
-export const { setSelectSorting } = categoriesSlice.actions;
+export const { setSelectCategories } = categoriesSlice.actions;
 export default categoriesSlice.reducer;
