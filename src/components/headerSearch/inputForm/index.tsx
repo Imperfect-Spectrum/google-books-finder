@@ -1,11 +1,17 @@
 import axios from "axios";
 import { useState } from "react";
 import { addNewBooks, clearBook } from "../../../store/bookSlice";
-import { useAppDispatch } from "../../../hook";
+import { useAppDispatch, useAppSelector } from "../../../hook";
 import { MyInput } from "../../ui/myInput";
+import { RootState } from "../../../store";
 
 export function InputForm() {
   const dispatch = useAppDispatch();
+
+  const categories = useAppSelector(
+    (state: RootState) => state.categories.selectCategories
+  );
+
   const [searchValue, setSearchValue] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
@@ -18,11 +24,12 @@ export function InputForm() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${searchValue}&startIndex=0&maxResults=30`
+        categories === "All"
+          ? `https://www.googleapis.com/books/v1/volumes?q=${searchValue}&startIndex=0&maxResults=30`
+          : `https://www.googleapis.com/books/v1/volumes?q=${searchValue}+subject:${categories}&startIndex=0&maxResults=30`
       );
       dispatch(clearBook());
       dispatch(addNewBooks(response.data));
-
     } catch (error) {
       console.error(error);
     }

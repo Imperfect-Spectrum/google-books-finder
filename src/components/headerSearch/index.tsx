@@ -3,7 +3,6 @@ import { CategoriesSelect } from "./categoriesSelect";
 import { InputForm } from "./inputForm";
 
 export function SearchHeader() {
-
   return (
     <div className="flex flex-col w-[100%] bg-slate-100 py-6">
       <div className="flex flex-col sm:w-[50%] mx-auto">
@@ -14,7 +13,6 @@ export function SearchHeader() {
         <div className="sm:flex gap-5">
           <SortingSelect />
           <CategoriesSelect />
-          
         </div>
       </div>
     </div>

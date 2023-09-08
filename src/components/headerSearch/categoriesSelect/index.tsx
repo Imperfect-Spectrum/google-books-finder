@@ -1,4 +1,5 @@
 import { useAppDispatch } from "../../../hook";
+import { clearBook } from "../../../store/bookSlice";
 import { setSelectCategories } from "../../../store/categoriesSlice";
 
 export function CategoriesSelect() {
@@ -8,6 +9,8 @@ export function CategoriesSelect() {
     const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
       const value = event.target.value;
       dispatch(setSelectCategories({ selectCategories: value }))
+      dispatch(clearBook());
+      fet
     };
     
   return (
