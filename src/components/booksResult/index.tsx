@@ -1,8 +1,41 @@
-import { useAppSelector } from "../../hook";
+import axios from "axios";
+import { useAppDispatch, useAppSelector } from "../../hook";
 import { RootState } from "../../store";
+import { incrementPaginationIndex } from "../../store/paginationIndexSlice";
+import { addNewItems } from "../../store/bookSlice";
 
 export function BooksResult() {
+  const dispatch = useAppDispatch();
   const books = useAppSelector((state: RootState) => state.books);
+  const categories = useAppSelector(
+    (state: RootState) => state.categories.selectCategories
+  );
+  const paginationIndex = useAppSelector(
+    (state: RootState) => state.paginationIndex.paginationIndex
+  );
+
+  const inputValue = useAppSelector(
+    (state: RootState) => state.inputSearch.inputValue
+  );
+
+  const fetchMoreData = async () => {
+    try {
+      const response = await axios.get(
+        categories === "All"
+          ? `https://www.googleapis.com/books/v1/volumes?q=${inputValue}&startIndex=${paginationIndex}&maxResults=30`
+          : `https://www.googleapis.com/books/v1/volumes?q=${inputValue}+subject:${categories}&startIndex=${paginationIndex}&maxResults=30`
+      );
+      dispatch(addNewItems(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  function loadMoreClick() {
+    dispatch(incrementPaginationIndex());
+    fetchMoreData();
+  }
+
   if (!books || books.length === 0) {
     return <></>;
   }
@@ -42,11 +75,20 @@ export function BooksResult() {
         ))}
       </div>
       <button
+        onClick={loadMoreClick}
         type="button"
         className="w-[15%] mt-6 ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:outline-none  font-medium rounded-full text-sm px-5 py-4 text-center mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >
         Load more
       </button>
+      <div
+        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+        role="status"
+      >
+        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+          Loading...
+        </span>
+      </div>
     </div>
   );
 }

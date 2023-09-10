@@ -4,6 +4,7 @@ import { addNewBooks, clearBook } from "../../../store/bookSlice";
 import { useAppDispatch, useAppSelector } from "../../../hook";
 import { MyInput } from "../../ui/myInput";
 import { RootState } from "../../../store";
+import { setInputValue } from "../../../store/inputSearchSlice";
 
 export function InputForm() {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ export function InputForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(searchValue);
+    dispatch(setInputValue({ inputValue: searchValue }));
     fetchData();
     setSearchValue("");
   }

@@ -1,23 +1,26 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-interface SelectCategories {
-  selectCategories: number;
+interface PaginationIndex {
+  paginationIndex: number;
 }
 
-const initialState: SelectCategories = {
-  selectCategories: 0,
+const initialState: PaginationIndex = {
+  paginationIndex: 0,
 };
 
-const categoriesSlice = createSlice({
-  name: "selectCategories",
+const paginationIndexSlice = createSlice({
+  name: "paginationIndex",
   initialState,
   reducers: {
-    setSelectCategories: (state, action: PayloadAction<SelectCategories>) => {
-      // eslint-disable-next-line no-param-reassign
-      state.selectCategories = action.payload.selectCategories;
+    incrementPaginationIndex: (state) => {
+      state.paginationIndex += 30;
+    },
+    resetPaginationIndex: (state) => {
+      state.paginationIndex = 0;
     },
   },
 });
 
-export const { setSelectCategories } = categoriesSlice.actions;
-export default categoriesSlice.reducer;
+export const { incrementPaginationIndex, resetPaginationIndex } =
+  paginationIndexSlice.actions;
+export default paginationIndexSlice.reducer;
