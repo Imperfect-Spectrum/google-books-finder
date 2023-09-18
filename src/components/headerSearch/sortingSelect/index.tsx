@@ -1,12 +1,34 @@
-import { useAppDispatch } from "../../../hook";
+import { testFetch } from "../../../api";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { RootState } from "../../../store";
+import { addNewBooks, clearBook } from "../../../store/bookSlice";
+import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
 import { setSelectSorting } from "../../../store/sortingSlice";
 
 export function SortingSelect() {
   const dispatch = useAppDispatch();
 
+  const inputValue = useAppSelector(
+    (state: RootState) => state.inputSearch.inputValue
+  );
+  const categoriesValue = useAppSelector(
+    (state: RootState) => state.categories.selectCategories
+  );
+
   const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    dispatch(setSelectSorting({ selectSorting: value }))
+    dispatch(setSelectSorting({ selectSorting: value }));
+    dispatch(clearBook());
+    dispatch(resetPaginationIndex());
+    if (inputValue !== "") {
+      testFetch(inputValue, 0, categoriesValue, value)
+        .then((result) => {
+          dispatch(addNewBooks(result));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   return (
@@ -30,5 +52,3 @@ export function SortingSelect() {
     </div>
   );
 }
-
-

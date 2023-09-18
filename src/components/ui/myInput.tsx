@@ -1,5 +1,3 @@
-import React from "react";
-
 export const MyInput = ({ children, ...props }) => {
   return (
     <input

@@ -5,7 +5,7 @@ interface SelectSorting {
 }
 
 const initialState: SelectSorting = {
-  selectSorting: "Relevance",
+  selectSorting: "relevance",
 };
 
 const selectSlice = createSlice({

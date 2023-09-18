@@ -3,13 +3,20 @@ import { useAppDispatch, useAppSelector } from "../../hook";
 import { RootState } from "../../store";
 import { incrementPaginationIndex } from "../../store/paginationIndexSlice";
 import { addNewItems } from "../../store/bookSlice";
+import { LoadingIcon } from "../ui/loadingIcon";
+import { useState } from "react";
 
 export function BooksResult() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useAppDispatch();
+  
   const books = useAppSelector((state: RootState) => state.books);
+
   const categories = useAppSelector(
     (state: RootState) => state.categories.selectCategories
   );
+
   const paginationIndex = useAppSelector(
     (state: RootState) => state.paginationIndex.paginationIndex
   );
@@ -19,6 +26,7 @@ export function BooksResult() {
   );
 
   const fetchMoreData = async () => {
+    setIsLoading(!isLoading);
     try {
       const response = await axios.get(
         categories === "All"
@@ -26,8 +34,10 @@ export function BooksResult() {
           : `https://www.googleapis.com/books/v1/volumes?q=${inputValue}+subject:${categories}&startIndex=${paginationIndex}&maxResults=30`
       );
       dispatch(addNewItems(response.data));
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -35,6 +45,7 @@ export function BooksResult() {
     dispatch(incrementPaginationIndex());
     fetchMoreData();
   }
+
 
   if (!books || books.length === 0) {
     return <></>;
@@ -47,6 +58,7 @@ export function BooksResult() {
           Found {books[0].totalItems} result
         </h1>
       </div>
+
       <div className="flex flex-wrap sm:justify-between justify-center items-center gap-5 mx-auto">
         {books[0].items.map((book) => (
           <div
@@ -81,14 +93,7 @@ export function BooksResult() {
       >
         Load more
       </button>
-      <div
-        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-        role="status"
-      >
-        <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-          Loading...
-        </span>
-      </div>
+      {isLoading == true ? <LoadingIcon /> : null}
     </div>
   );
 }

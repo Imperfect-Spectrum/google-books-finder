@@ -1,18 +1,36 @@
-import { useAppDispatch } from "../../../hook";
-import { clearBook } from "../../../store/bookSlice";
+import { testFetch } from "../../../api";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { RootState } from "../../../store";
+import { addNewBooks, clearBook } from "../../../store/bookSlice";
 import { setSelectCategories } from "../../../store/categoriesSlice";
+import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
 
 export function CategoriesSelect() {
-    
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const value = event.target.value;
-      dispatch(setSelectCategories({ selectCategories: value }))
-      dispatch(clearBook());
-      fet
-    };
-    
+  const inputValue = useAppSelector(
+    (state: RootState) => state.inputSearch.inputValue
+  );
+  const sortingValue = useAppSelector(
+    (state: RootState) => state.sorts.selectSorting
+  );
+
+  const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    dispatch(setSelectCategories({ selectCategories: value }));
+    dispatch(clearBook());
+    dispatch(resetPaginationIndex());
+    if (inputValue !== "") {
+      testFetch(inputValue, 0, value, sortingValue)
+        .then((result) => {
+          dispatch(addNewBooks(result));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
   return (
     <div className="w-[100%]">
       <label

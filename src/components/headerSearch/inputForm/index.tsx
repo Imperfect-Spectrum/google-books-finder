@@ -1,40 +1,43 @@
-import axios from "axios";
 import { useState } from "react";
 import { addNewBooks, clearBook } from "../../../store/bookSlice";
 import { useAppDispatch, useAppSelector } from "../../../hook";
 import { MyInput } from "../../ui/myInput";
 import { RootState } from "../../../store";
 import { setInputValue } from "../../../store/inputSearchSlice";
+import { testFetch } from "../../../api";
+import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
+import { setLoadingState } from "../../../store/loadingSlice";
 
 export function InputForm() {
   const dispatch = useAppDispatch();
 
-  const categories = useAppSelector(
+  const categoriesValue = useAppSelector(
     (state: RootState) => state.categories.selectCategories
+  );
+  const paginationIndex = useAppSelector(
+    (state: RootState) => state.paginationIndex.paginationIndex
+  );
+  const sortingValue = useAppSelector(
+    (state: RootState) => state.sorts.selectSorting
   );
 
   const [searchValue, setSearchValue] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    dispatch(setLoadingState({ loadingState: true }));
     dispatch(setInputValue({ inputValue: searchValue }));
-    fetchData();
-    setSearchValue("");
+    dispatch(clearBook());
+    dispatch(resetPaginationIndex());
+    testFetch(searchValue, paginationIndex, categoriesValue, sortingValue)
+      .then((result) => {
+        dispatch(addNewBooks(result));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    dispatch(setLoadingState({ loadingState: false }));
   }
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        categories === "All"
-          ? `https://www.googleapis.com/books/v1/volumes?q=${searchValue}&startIndex=0&maxResults=30`
-          : `https://www.googleapis.com/books/v1/volumes?q=${searchValue}+subject:${categories}&startIndex=0&maxResults=30`
-      );
-      dispatch(clearBook());
-      dispatch(addNewBooks(response.data));
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit}>
