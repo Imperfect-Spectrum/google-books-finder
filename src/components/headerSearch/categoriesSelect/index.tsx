@@ -1,4 +1,4 @@
-import { testFetch } from "../../../api";
+import { fetchData } from "../../../api";
 import { useAppDispatch, useAppSelector } from "../../../hook";
 import { RootState } from "../../../store";
 import { addNewBooks, clearBook } from "../../../store/bookSlice";
@@ -8,8 +8,11 @@ import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
 export function CategoriesSelect() {
   const dispatch = useAppDispatch();
 
-  const inputValue = useAppSelector(
+  const searchValue = useAppSelector(
     (state: RootState) => state.inputSearch.inputValue
+  );
+  const categoriesValue = useAppSelector(
+    (state: RootState) => state.categories.selectCategories
   );
   const sortingValue = useAppSelector(
     (state: RootState) => state.sorts.selectSorting
@@ -20,8 +23,16 @@ export function CategoriesSelect() {
     dispatch(setSelectCategories({ selectCategories: value }));
     dispatch(clearBook());
     dispatch(resetPaginationIndex());
-    if (inputValue !== "") {
-      testFetch(inputValue, 0, value, sortingValue)
+
+    const queryParams = {
+      searchValue,
+      paginationIndex: 0,
+      categories: categoriesValue,
+      sorting: sortingValue,
+    };
+
+    if (searchValue !== "") {
+      fetchData(queryParams)
         .then((result) => {
           dispatch(addNewBooks(result));
         })

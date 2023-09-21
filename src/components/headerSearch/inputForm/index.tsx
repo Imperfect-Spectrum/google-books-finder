@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../hook";
 import { MyInput } from "../../ui/myInput";
 import { RootState } from "../../../store";
 import { setInputValue } from "../../../store/inputSearchSlice";
-import { testFetch } from "../../../api";
+import { fetchData } from "../../../api";
 import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
 import { setLoadingState } from "../../../store/loadingSlice";
 
@@ -29,7 +29,15 @@ export function InputForm() {
     dispatch(setInputValue({ inputValue: searchValue }));
     dispatch(clearBook());
     dispatch(resetPaginationIndex());
-    testFetch(searchValue, paginationIndex, categoriesValue, sortingValue)
+
+    const queryParams = {
+      searchValue,
+      paginationIndex,
+      categories: categoriesValue,
+      sorting: sortingValue,
+    };
+
+    fetchData(queryParams)
       .then((result) => {
         dispatch(addNewBooks(result));
       })

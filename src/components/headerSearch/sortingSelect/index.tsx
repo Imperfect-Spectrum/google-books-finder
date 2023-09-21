@@ -1,4 +1,4 @@
-import { testFetch } from "../../../api";
+import { fetchData } from "../../../api";
 import { useAppDispatch, useAppSelector } from "../../../hook";
 import { RootState } from "../../../store";
 import { addNewBooks, clearBook } from "../../../store/bookSlice";
@@ -8,11 +8,14 @@ import { setSelectSorting } from "../../../store/sortingSlice";
 export function SortingSelect() {
   const dispatch = useAppDispatch();
 
-  const inputValue = useAppSelector(
+  const searchValue = useAppSelector(
     (state: RootState) => state.inputSearch.inputValue
   );
   const categoriesValue = useAppSelector(
     (state: RootState) => state.categories.selectCategories
+  );
+  const sortingValue = useAppSelector(
+    (state: RootState) => state.sorts.selectSorting
   );
 
   const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -20,8 +23,16 @@ export function SortingSelect() {
     dispatch(setSelectSorting({ selectSorting: value }));
     dispatch(clearBook());
     dispatch(resetPaginationIndex());
-    if (inputValue !== "") {
-      testFetch(inputValue, 0, categoriesValue, value)
+
+    const queryParams = {
+      searchValue,
+      paginationIndex: 0,
+      categories: categoriesValue,
+      sorting: sortingValue,
+    };
+
+    if (searchValue !== "") {
+      fetchData(queryParams)
         .then((result) => {
           dispatch(addNewBooks(result));
         })

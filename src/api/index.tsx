@@ -1,27 +1,12 @@
-// const fetchMoreData = async () => {
-//     setIsLoading(!isLoading);
-//     try {
-//       const response = await axios.get(
-//         categories === "All"
-//           ? `https://www.googleapis.com/books/v1/volumes?q=${inputValue}&startIndex=${paginationIndex}&maxResults=30`
-//           : `https://www.googleapis.com/books/v1/volumes?q=${inputValue}+subject:${categories}&startIndex=${paginationIndex}&maxResults=30`
-//       );
-//       dispatch(addNewItems(response.data));
-//       setIsLoading(false);
-//     } catch (error) {
-//       console.error(error);
-//       setIsLoading(false);
-//     }
-//   };
-
 import axios from "axios";
+import { QueryParams } from "../type";
 
-export const testFetch = async (
+export const fetchData = async ({
   searchValue,
   paginationIndex,
   categories,
-  sorting
-) => {
+  sorting,
+}: QueryParams) => {
   try {
     console.log(searchValue, paginationIndex, categories, sorting);
     const response = await axios.get(

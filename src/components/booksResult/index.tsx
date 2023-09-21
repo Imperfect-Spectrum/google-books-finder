@@ -1,19 +1,15 @@
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../hook";
 import { RootState } from "../../store";
 import { incrementPaginationIndex } from "../../store/paginationIndexSlice";
 import { addNewItems } from "../../store/bookSlice";
-import { LoadingIcon } from "../ui/loadingIcon";
-import { useState } from "react";
+import { fetchData } from "../../api";
 
 export function BooksResult() {
-  const [isLoading, setIsLoading] = useState(false);
-
   const dispatch = useAppDispatch();
-  
+
   const books = useAppSelector((state: RootState) => state.books);
 
-  const categories = useAppSelector(
+  const categoriesValue = useAppSelector(
     (state: RootState) => state.categories.selectCategories
   );
 
@@ -21,31 +17,34 @@ export function BooksResult() {
     (state: RootState) => state.paginationIndex.paginationIndex
   );
 
-  const inputValue = useAppSelector(
+  const searchValue = useAppSelector(
     (state: RootState) => state.inputSearch.inputValue
+  );
+  const sortingValue = useAppSelector(
+    (state: RootState) => state.sorts.selectSorting
   );
 
   const fetchMoreData = async () => {
-    setIsLoading(!isLoading);
-    try {
-      const response = await axios.get(
-        categories === "All"
-          ? `https://www.googleapis.com/books/v1/volumes?q=${inputValue}&startIndex=${paginationIndex}&maxResults=30`
-          : `https://www.googleapis.com/books/v1/volumes?q=${inputValue}+subject:${categories}&startIndex=${paginationIndex}&maxResults=30`
-      );
-      dispatch(addNewItems(response.data));
-      setIsLoading(false);
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-    }
+    const queryParams = {
+      searchValue,
+      paginationIndex,
+      categories: categoriesValue,
+      sorting: sortingValue,
+    };
+
+    fetchData(queryParams)
+      .then((result) => {
+        dispatch(addNewItems(result));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   function loadMoreClick() {
     dispatch(incrementPaginationIndex());
     fetchMoreData();
   }
-
 
   if (!books || books.length === 0) {
     return <></>;
@@ -62,7 +61,7 @@ export function BooksResult() {
       <div className="flex flex-wrap sm:justify-between justify-center items-center gap-5 mx-auto">
         {books[0].items.map((book) => (
           <div
-            className="flex flex-col items-center bg-[rgb(235,235,235)] sm:w-[30%] w-[70%] min-h-[350px] pt-5 hover:bg-orange-200"
+            className="flex flex-col items-center bg-[rgb(235,235,235)] sm:w-[30%] w-[70%] min-h-[350px] pt-5 hover:bg-orange-200 rounded-3xl"
             key={book.id}
           >
             <img
@@ -93,7 +92,6 @@ export function BooksResult() {
       >
         Load more
       </button>
-      {isLoading == true ? <LoadingIcon /> : null}
     </div>
   );
 }
