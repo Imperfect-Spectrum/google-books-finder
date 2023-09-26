@@ -58,7 +58,7 @@ export function SortingSelect() {
         <option selected value="Relevance">
           Relevance
         </option>
-        <option value="Newest">Newest</option>
+        <option value="Newest" >Newest</option>
       </select>
     </div>
   );

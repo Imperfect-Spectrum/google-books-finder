@@ -3,6 +3,8 @@ import { RootState } from "../../store";
 import { incrementPaginationIndex } from "../../store/paginationIndexSlice";
 import { addNewItems } from "../../store/bookSlice";
 import { fetchData } from "../../api";
+import { Link } from "react-router-dom";
+import { setLoadingState } from "../../store/loadingSlice";
 
 export function BooksResult() {
   const dispatch = useAppDispatch();
@@ -24,10 +26,12 @@ export function BooksResult() {
     (state: RootState) => state.sorts.selectSorting
   );
 
-  const fetchMoreData = async () => {
+  const loadMoreClick = async () => {
+    dispatch(setLoadingState({ loadingState: true }));
+    dispatch(incrementPaginationIndex());
     const queryParams = {
       searchValue,
-      paginationIndex,
+      paginationIndex: paginationIndex + 30,
       categories: categoriesValue,
       sorting: sortingValue,
     };
@@ -39,12 +43,8 @@ export function BooksResult() {
       .catch((error) => {
         console.error(error);
       });
+    dispatch(setLoadingState({ loadingState: false }));
   };
-
-  function loadMoreClick() {
-    dispatch(incrementPaginationIndex());
-    fetchMoreData();
-  }
 
   if (!books || books.length === 0) {
     return <></>;
@@ -60,9 +60,10 @@ export function BooksResult() {
 
       <div className="flex flex-wrap sm:justify-between justify-center items-center gap-5 mx-auto">
         {books[0].items.map((book) => (
-          <div
-            className="flex flex-col items-center bg-[rgb(235,235,235)] sm:w-[30%] w-[70%] min-h-[350px] pt-5 hover:bg-orange-200 rounded-3xl"
+          <Link
             key={book.id}
+            to={book.id}
+            className="flex flex-col items-center bg-[rgb(235,235,235)] sm:w-[30%]  w-[100%] min-h-[350px] pt-5 hover:bg-orange-200 rounded-3xl"
           >
             <img
               className="w-[128px] h-[182]"
@@ -82,7 +83,7 @@ export function BooksResult() {
                 ? book.volumeInfo.authors?.join(", ")
                 : "Not Found"}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
       <button
@@ -92,6 +93,7 @@ export function BooksResult() {
       >
         Load more
       </button>
+      {}
     </div>
   );
 }

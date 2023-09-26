@@ -4,6 +4,11 @@ export interface QueryParams {
   categories: string;
   sorting: string;
 }
+
+export type TypeProps = {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+};
 export interface Books {
   kind: string;
   totalItems: number;

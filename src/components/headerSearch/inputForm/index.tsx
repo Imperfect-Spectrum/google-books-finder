@@ -7,8 +7,9 @@ import { setInputValue } from "../../../store/inputSearchSlice";
 import { fetchData } from "../../../api";
 import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
 import { setLoadingState } from "../../../store/loadingSlice";
+import { LoadingIcon } from "../../ui/loadingIcon";
 
-export function InputForm() {
+export function InputForm({ isLoading, setIsLoading }: TypeProps) {
   const dispatch = useAppDispatch();
 
   const categoriesValue = useAppSelector(
@@ -26,6 +27,7 @@ export function InputForm() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     dispatch(setLoadingState({ loadingState: true }));
+    setIsLoading(!isLoading);
     dispatch(setInputValue({ inputValue: searchValue }));
     dispatch(clearBook());
     dispatch(resetPaginationIndex());
@@ -45,6 +47,7 @@ export function InputForm() {
         console.error(error);
       });
     dispatch(setLoadingState({ loadingState: false }));
+    setIsLoading(!isLoading);
   }
 
   return (
@@ -82,6 +85,7 @@ export function InputForm() {
         >
           Search
         </button>
+        {isLoading === true ? <LoadingIcon /> : null}
       </div>
     </form>
   );
