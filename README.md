@@ -1,27 +1,27 @@
-# React + TypeScript + Vite
+## Google books finder
+A simple application to search for books from the Google Books library. Allows you to search for books by title, filter by relevance and date, filter by category.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Check out [live](https://google-books-finder.vercel.app/)
 
-Currently, two official plugins are available:
+![image](https://github.com/Imperfect-Spectrum/google-books-finder/assets/55977481/deca37fb-c116-4a65-af04-a33b667fc7f6)
+![image](https://github.com/Imperfect-Spectrum/google-books-finder/assets/55977481/b50db0cf-506d-4c99-8480-2c620cb5a271)
+![image](https://github.com/Imperfect-Spectrum/google-books-finder/assets/55977481/289f2e64-8d3a-4b52-b3b9-989f77656233)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-- Configure the top-level `parserOptions` property like this:
+## Application Description
+The application was made using React, TS, Redux-Toolkit,Tailwind and react router dom v6.
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+The application receives data using the open google-book api.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## How to run
+
+Clone this repo
+
+cd google-books-finder
+
+Run npm install
+
+Run npm run dev
+
