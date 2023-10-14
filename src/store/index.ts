@@ -4,7 +4,6 @@ import categoriesSlice from "./categoriesSlice";
 import bookSlice from "./bookSlice";
 import paginationIndexSlice from "./paginationIndexSlice";
 import inputSearchSlice from "./inputSearchSlice";
-import loadingSlice from "./loadingSlice";
 
 const store = configureStore({
   reducer: {
@@ -13,7 +12,6 @@ const store = configureStore({
     categories: categoriesSlice,
     paginationIndex: paginationIndexSlice,
     inputSearch: inputSearchSlice,
-    loadingState: loadingSlice,
   },
 });
 

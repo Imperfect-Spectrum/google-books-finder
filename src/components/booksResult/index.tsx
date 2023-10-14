@@ -1,33 +1,29 @@
 import { useAppDispatch, useAppSelector } from "../../hook";
 import { RootState } from "../../store";
+import { TypeProps } from "../../type";
 import { incrementPaginationIndex } from "../../store/paginationIndexSlice";
 import { addNewItems } from "../../store/bookSlice";
 import { fetchData } from "../../api";
 import { Link } from "react-router-dom";
-import { setLoadingState } from "../../store/loadingSlice";
+import { LoadingIcon } from "../ui/loadingIcon";
+import { useState } from "react";
 
-export function BooksResult() {
+export function BooksResult({ isLoading }: TypeProps) {
   const dispatch = useAppDispatch();
 
-  const books = useAppSelector((state: RootState) => state.books);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const categoriesValue = useAppSelector(
-    (state: RootState) => state.categories.selectCategories
-  );
-
-  const paginationIndex = useAppSelector(
-    (state: RootState) => state.paginationIndex.paginationIndex
-  );
-
-  const searchValue = useAppSelector(
-    (state: RootState) => state.inputSearch.inputValue
-  );
-  const sortingValue = useAppSelector(
-    (state: RootState) => state.sorts.selectSorting
-  );
+  const { books, categoriesValue, paginationIndex, searchValue, sortingValue } =
+    useAppSelector((state: RootState) => ({
+      books: state.books,
+      categoriesValue: state.categories.selectCategories,
+      paginationIndex: state.paginationIndex.paginationIndex,
+      searchValue: state.inputSearch.inputValue,
+      sortingValue: state.sorts.selectSorting,
+    }));
 
   const loadMoreClick = async () => {
-    dispatch(setLoadingState({ loadingState: true }));
+    setIsLoadingMore(true);
     dispatch(incrementPaginationIndex());
     const queryParams = {
       searchValue,
@@ -36,18 +32,32 @@ export function BooksResult() {
       sorting: sortingValue,
     };
 
-    fetchData(queryParams)
-      .then((result) => {
-        dispatch(addNewItems(result));
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    dispatch(setLoadingState({ loadingState: false }));
+    try {
+      const result = await fetchData(queryParams);
+      dispatch(addNewItems(result));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
-  if (!books || books.length === 0) {
-    return <></>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center pb-5">
+        <LoadingIcon />
+      </div>
+    );
+  }
+
+  if (books.length === 0 || (books[0].totalItems || 0) === 0) {
+    return (
+      <p className="text-xl font-medium text-gray-900 dark:text-white text-center pb-5">
+        {books.length === 0
+          ? "Enter the title of the book"
+          : "No books found :("}
+      </p>
+    );
   }
 
   return (
@@ -86,14 +96,19 @@ export function BooksResult() {
           </Link>
         ))}
       </div>
-      <button
-        onClick={loadMoreClick}
-        type="button"
-        className="w-[15%] mt-6 ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:outline-none  font-medium rounded-full text-sm px-5 py-4 text-center mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Load more
-      </button>
-      {}
+      {isLoadingMore === true ? (
+        <div className="flex items-center justify-center pt-5">
+          <LoadingIcon />
+        </div>
+      ) : (
+        <button
+          onClick={loadMoreClick}
+          type="button"
+          className="sm:w-[20%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto mt-5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        >
+          Load more
+        </button>
+      )}
     </div>
   );
 }

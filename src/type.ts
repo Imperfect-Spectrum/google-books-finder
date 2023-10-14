@@ -6,9 +6,10 @@ export interface QueryParams {
 }
 
 export type TypeProps = {
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoading?: boolean;
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;
 };
+  
 export interface Books {
   kind: string;
   totalItems: number;

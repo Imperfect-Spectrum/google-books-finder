@@ -4,31 +4,31 @@ import { RootState } from "../../../store";
 import { addNewBooks, clearBook } from "../../../store/bookSlice";
 import { resetPaginationIndex } from "../../../store/paginationIndexSlice";
 import { setSelectSorting } from "../../../store/sortingSlice";
+import { TypeProps } from "../../../type";
 
-export function SortingSelect() {
+export function SortingSelect({ setIsLoading }: TypeProps) {
   const dispatch = useAppDispatch();
 
-  const searchValue = useAppSelector(
-    (state: RootState) => state.inputSearch.inputValue
-  );
-  const categoriesValue = useAppSelector(
-    (state: RootState) => state.categories.selectCategories
-  );
-  const sortingValue = useAppSelector(
-    (state: RootState) => state.sorts.selectSorting
+  const { searchValue, categoriesValue, sortingValue } = useAppSelector(
+    (state: RootState) => ({
+      searchValue: state.inputSearch.inputValue,
+      categoriesValue: state.categories.selectCategories,
+      sortingValue: state.sorts.selectSorting,
+    })
   );
 
-  const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const selectSortingChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
     dispatch(setSelectSorting({ selectSorting: value }));
     dispatch(clearBook());
     dispatch(resetPaginationIndex());
+    if (setIsLoading && searchValue != "") setIsLoading(true);
 
     const queryParams = {
       searchValue,
       paginationIndex: 0,
       categories: categoriesValue,
-      sorting: sortingValue,
+      sorting: value,
     };
 
     if (searchValue !== "") {
@@ -38,6 +38,9 @@ export function SortingSelect() {
         })
         .catch((error) => {
           console.error(error);
+        })
+        .finally(() => {
+          if (setIsLoading) setIsLoading(false);
         });
     }
   };
@@ -53,12 +56,11 @@ export function SortingSelect() {
       <select
         id="sorting"
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        onChange={selectChange}
+        onChange={selectSortingChange}
+        defaultValue={sortingValue}
       >
-        <option selected value="Relevance">
-          Relevance
-        </option>
-        <option value="Newest" >Newest</option>
+        <option value="Relevance">Relevance</option>
+        <option value="Newest">Newest</option>
       </select>
     </div>
   );

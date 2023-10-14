@@ -13,8 +13,8 @@ export function SearchHeader({ isLoading, setIsLoading }: TypeProps) {
         <InputForm setIsLoading={setIsLoading} isLoading={isLoading} />
 
         <div className="sm:flex gap-5">
-          <SortingSelect />
-          <CategoriesSelect />
+          <SortingSelect setIsLoading={setIsLoading} />
+          <CategoriesSelect setIsLoading={setIsLoading} />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-export const MyInput = ({ children, ...props }) => {
+export const MyInput = ({ ...props }) => {
   return (
     <input
       {...props}

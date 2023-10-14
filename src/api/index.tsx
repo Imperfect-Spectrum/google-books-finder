@@ -8,7 +8,6 @@ export const fetchData = async ({
   sorting,
 }: QueryParams) => {
   try {
-    console.log(searchValue, paginationIndex, categories, sorting);
     const response = await axios.get(
       categories === "All"
         ? `https://www.googleapis.com/books/v1/volumes?q=${searchValue}&startIndex=${paginationIndex}&maxResults=30&orderBy=${sorting}`
